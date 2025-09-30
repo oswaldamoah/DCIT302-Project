@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Moveable Dummy Earth — Sure Banker</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    html,body { 
+      height:100%; 
+      margin:0; 
+      background:#000; 
+      overflow:hidden;
+      /* Hide scrollbars but allow scrolling */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar { 
+      display: none; /* Safari and Chrome */
+    }
+    canvas { width:100%; height:100%; display:block; }
+    /* small overlay hint */
+    #hint {
+      position:fixed; left:12px; bottom:12px; color:rgba(255,255,255,0.85);
+      background:rgba(0,0,0,0.35); padding:8px 10px; border-radius:8px; font-family:system-ui,Arial;
+      font-size:13px; pointer-events:none;
+    }
+  </style>
+</head>
+<body>
+  <div id="hint">Drag to spin • Scroll to zoom</div>
+
+  <!-- Three.js from CDN (tiny dependency). If your environment blocks CDN, fallback texture still draws a globe. -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+
+  <script>
+  // Quick WebGL check
+  if (!window.WebGLRenderingContext) {
+    document.body.innerHTML = '<div style="color:#fff;background:#111;height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui,Arial;padding:20px;text-align:center">Your browser does not support WebGL.<br>Try Chrome/Edge/Firefox or enable WebGL.</div>';
+    throw new Error('No WebGL');
+  }
+
+  // --- Scene / renderer / camera ---
+  const scene = new THREE.Scene();
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio || 1);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 1);
+  document.body.appendChild(renderer.domElement);
+
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  let camRadius = 3.8;
+  camera.position.set(0, 0, camRadius);
+  camera.lookAt(0, 0, 0);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+  dir.position.set(5, 3, 5);
+  scene.add(dir);
+
+  // Sphere geometry (Earth)
+  const radius = 1;
+  const geometry = new THREE.SphereGeometry(radius, 64, 64);
+
+  // Fallback canvas texture (guarantees something displays even if external image blocked)
+  function makeFallbackTexture() {
+    const c = document.createElement('canvas');
+    c.width = 1024; c.height = 512;
+    const ctx = c.getContext('2d');
+
+    // ocean
+    ctx.fillStyle = '#0b3b6f';
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    // simple continents-ish blobs (not accurate but noticeably "earth-like")
+    ctx.fillStyle = '#2b8a3e';
+    // draw a few blobs
+    ctx.beginPath();
+    ctx.ellipse(330, 240, 180, 90, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(700, 220, 140, 70, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(520, 340, 110, 60, 0.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // simple lat/long lines to help depth perception
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i < 18; i++) {
+      const x = i * c.width / 18;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, c.height); ctx.stroke();
+    }
+    for (let j = 1; j < 8; j++) {
+      const y = j * c.height / 8;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(c.width, y); ctx.stroke();
+    }
+
+    return new THREE.CanvasTexture(c);
+  }
+
+  // initial material uses fallback so user never sees black
+  const fallbackMat = new THREE.MeshPhongMaterial({ map: makeFallbackTexture(), shininess: 5 });
+  const earth = new THREE.Mesh(geometry, fallbackMat);
+  scene.add(earth);
+
+  // Try to load a nicer real Earth texture (crossOrigin). If it loads, replace material.
+  (function tryLoadRealTexture() {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = 'https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg'; // widely-available texture
+    img.onload = function () {
+      const tex = new THREE.Texture(img);
+      tex.needsUpdate = true;
+      earth.material = new THREE.MeshPhongMaterial({ map: tex, shininess: 5 });
+      console.log('Loaded external earth texture.');
+    };
+    img.onerror = function () {
+      console.warn('External earth texture failed to load — using fallback texture.');
+    };
+  })();
+
+  // --- Simple custom controls: drag to rotate + wheel zoom + inertia ---
+  let dragging = false;
+  let lastX = 0, lastY = 0;
+  let velX = 0, velY = 0;
+
+  renderer.domElement.addEventListener('pointerdown', e => {
+    dragging = true;
+    lastX = e.clientX; lastY = e.clientY;
+    renderer.domElement.setPointerCapture?.(e.pointerId);
+  });
+
+  renderer.domElement.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+
+    // rotate sphere (horizontal drag = rotate around Y, vertical drag = tilt around X)
+    earth.rotation.y += dx * 0.005;
+    earth.rotation.x += dy * 0.005;
+
+    // clamp x tilt so it doesn't flip
+    const maxTilt = Math.PI / 2 - 0.05;
+    earth.rotation.x = Math.max(-maxTilt, Math.min(maxTilt, earth.rotation.x));
+
+    // store velocity for inertia on release
+    velX = dx * 0.003;
+    velY = dy * 0.003;
+  });
+
+  window.addEventListener('pointerup', () => { dragging = false; });
+
+  // zoom (wheel)
+  window.addEventListener('wheel', e => {
+    e.preventDefault();
+    camRadius += e.deltaY * 0.0025;
+    camRadius = Math.max(1.6, Math.min(9, camRadius));
+  }, { passive: false });
+
+  // animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // apply inertia when not dragging
+    if (!dragging) {
+      earth.rotation.y += velX;
+      earth.rotation.x += velY;
+      velX *= 0.94; velY *= 0.94;
+      if (Math.abs(velX) < 1e-5) velX = 0;
+      if (Math.abs(velY) < 1e-5) velY = 0;
+    }
+
+    // update camera for zoom
+    camera.position.set(0, 0, camRadius);
+    camera.lookAt(0, 0, 0);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Set default scroll positions and hide scrollbars
+  window.addEventListener('load', () => {
+    // Set vertical scrollbar to bottom (end)
+    const maxVerticalScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({
+      top: maxVerticalScroll,
+      left: maxHorizontalScroll, // Center horizontal scroll
+      behavior: 'instant'
+    });
+    
+    // Disable manual scrolling by preventing scroll events
+    window.addEventListener('scroll', (e) => {
+      // Keep scroll position fixed
+      window.scrollTo({
+        top: maxVerticalScroll,
+        left: window.innerWidth / 2,
+        behavior: 'instant'
+      });
+    }, { passive: false });
+    
+    // Disable wheel scrolling on the page (but allow canvas interaction)
+    document.addEventListener('wheel', (e) => {
+      if (e.target !== renderer.domElement) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  });
+  </script>
+</body>
+</html>

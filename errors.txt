@@ -1,0 +1,5 @@
+Icons+Text label isnt fully visible and in dark mode dropdown container doesnt change (only text changes bg remains the same whjite). i think a better css label and dropdwon should be used
+
+In IconsOnly Mode, Planet dropdown shows no text. it shpoulkd be the only dropdown that should
+
+ive not done the sidebar that is collapsible

@@ -1,0 +1,42 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  min-height: 32px;
+  min-width: 80px;
+  box-shadow: none;
+  width: auto;
+  white-space: nowrap;
+}
+.button:hover {
+  background: var(--hover-bg);
+}
+.button:active {
+  background: var(--hover-bg);
+}
+.button:focus {
+  outline: none;
+  background: var(--hover-bg);
+}
+.icon {
+  font-size: 18px !important;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+.text {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-primary);
+}
