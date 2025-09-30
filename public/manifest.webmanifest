@@ -10,13 +10,13 @@
   "orientation": "landscape-primary",
   "icons": [
     {
-      "src": "/ref_images/download.png",
+      "src": "https://image.pngaaa.com/928/5019928-middle.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/ref_images/download (5).png",
+      "src": "https://image.pngaaa.com/928/5019928-middle.png",
       "sizes": "192x192",
       "type": "image/png"
     }
