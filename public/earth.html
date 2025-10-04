@@ -195,7 +195,7 @@
     const maxVerticalScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     window.scrollTo({
       top: maxVerticalScroll,
-      left: maxHorizontalScroll, // Center horizontal scroll
+      left: maxVerticalScroll, // Center horizontal scroll
       behavior: 'instant'
     });
     

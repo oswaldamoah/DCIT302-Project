@@ -27,7 +27,7 @@
 .button:focus {
   outline: none;
 }
-.active {
+.button.active {
   background: var(--hover-bg);
 }
 .icon {
