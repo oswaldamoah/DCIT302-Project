@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useCallback } from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ToolbarButton from './ToolbarButton';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -68,6 +68,8 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
     closeAllMenus,
   } = useContext(ThemeContext);
   const [isPlanetMenuOpen, setIsPlanetMenuOpen] = React.useState(false);
+  // Track which menu is animating open to avoid flash of previous menu
+  const openingRef = useRef(null);
   const toolbarRef = useRef();
   const addRef = useRef(null);
   const showRef = useRef(null);
@@ -85,6 +87,48 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [closeAllMenus]);
 
+  // Unified open handler to ensure only one menu is open at a time
+  const openMenu = useCallback((menu) => {
+    closeAllMenus();
+    setIsPlanetMenuOpen(false);
+    switch (menu) {
+      case 'add':
+        setIsAddMenuOpen(true); break;
+      case 'show':
+        setIsShowMenuOpen(true); break;
+      case 'share':
+        setIsShareMenuOpen(true); break;
+      case 'planet':
+        setIsPlanetMenuOpen(true); break;
+      default:
+        break;
+    }
+    openingRef.current = menu;
+    // Clear flag shortly after paint
+    requestAnimationFrame(() => { openingRef.current = null; });
+  }, [closeAllMenus, setIsAddMenuOpen, setIsShowMenuOpen, setIsShareMenuOpen]);
+
+  const toggleMenu = useCallback((menu, isOpen) => {
+    if (isOpen) {
+      closeAllMenus();
+      setIsPlanetMenuOpen(false);
+    } else {
+      openMenu(menu);
+    }
+  }, [openMenu, closeAllMenus]);
+
+  // Close menus on Escape
+  React.useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        closeAllMenus();
+        setIsPlanetMenuOpen(false);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [closeAllMenus]);
+
   return (
     <div className={styles.toolbar} ref={toolbarRef}>
       {/* Button Groups */}
@@ -94,8 +138,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
             icon={<AddIcon fontSize="large" />}
             text={displayFormat === 'iconsOnly' ? '' : <>Add <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
             displayFormat={displayFormat}
-            onClick={() => setIsAddMenuOpen((open) => !open)}
+            onClick={() => toggleMenu('add', isAddMenuOpen)}
             ariaExpanded={isAddMenuOpen}
+            isActive={isAddMenuOpen}
           />
           {isAddMenuOpen && (
             <DropdownMenu
@@ -114,8 +159,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
             icon={<VisibilityIcon fontSize="large" />}
             text={displayFormat === 'iconsOnly' ? '' : <>Show <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
             displayFormat={displayFormat}
-            onClick={() => setIsShowMenuOpen((open) => !open)}
+            onClick={() => toggleMenu('show', isShowMenuOpen)}
             ariaExpanded={isShowMenuOpen}
+            isActive={isShowMenuOpen}
           />
           {isShowMenuOpen && (
             <DropdownMenu
@@ -135,8 +181,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
             icon={<><PublicIcon fontSize="large" />{displayFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{marginLeft: '2px'}} />}</>}
             text={displayFormat === 'iconsOnly' ? '' : <>Planet <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
             displayFormat={displayFormat}
-            onClick={() => setIsPlanetMenuOpen((open) => !open)}
+            onClick={() => toggleMenu('planet', isPlanetMenuOpen)}
             ariaExpanded={isPlanetMenuOpen}
+            isActive={isPlanetMenuOpen}
           />
           {isPlanetMenuOpen && (
             <DropdownMenu
@@ -167,8 +214,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
               icon={<OpenInNewIcon fontSize="large" />}
               text={displayFormat === 'iconsOnly' ? '' : <>Share <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
               displayFormat={displayFormat}
-              onClick={() => setIsShareMenuOpen((open) => !open)}
+              onClick={() => toggleMenu('share', isShareMenuOpen)}
               ariaExpanded={isShareMenuOpen}
+              isActive={isShareMenuOpen}
             />
             {isShareMenuOpen && (
               <DropdownMenu
