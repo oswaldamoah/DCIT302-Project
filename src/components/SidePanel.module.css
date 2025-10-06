@@ -1,0 +1,65 @@
+.sidePanel {
+  position: fixed;
+  top: 56px; /* below title + menu + aligned with toolbar */
+  left: 0;
+  bottom: 0;
+  background: var(--bg-secondary, #f8f9fa);
+  border-right: 1px solid #e0e3e7;
+  display: flex;
+  flex-direction: column;
+  z-index: 1100;
+  overflow: hidden;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.04);
+}
+.dragBar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  cursor: col-resize;
+  height: 100%;
+  background: transparent;
+}
+.dragBar:hover { background: rgba(60,64,67,0.15); }
+.scrollArea {
+  flex: 1;
+  overflow: auto;
+  padding: 10px 10px 16px 12px;
+  scrollbar-width: thin;
+  box-sizing: border-box;
+}
+.scrollArea::-webkit-scrollbar { width: 8px; }
+.scrollArea::-webkit-scrollbar-track { background: transparent; }
+.scrollArea::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.section { margin-bottom: 12px; border: 1px solid var(--panel-section-border, #dfe1e5); background: var(--panel-section-bg, #fff); border-radius:4px; }
+.sectionHeader {
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 8px;
+  background: var(--panel-header-bg, linear-gradient(#f8f9fa,#eceff3));
+  border:none;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:500;
+  text-align:left;
+  font-family:'Google Sans', Roboto, Arial, sans-serif;
+}
+.sectionHeader:hover { background: var(--hover-bg); }
+.sectionChevron { display:flex; align-items:center; }
+.sectionTitle { flex:1; }
+.sectionBody { padding:8px 10px 10px 10px; font-size:12.5px; line-height:1.4; background: var(--panel-section-bg, #fff); }
+.searchBoxWrapper { display:flex; flex-direction:column; gap:6px; }
+.searchInputWrapper { position:relative; display:flex; align-items:center; }
+.searchIcon { position:absolute; left:8px; color:#5f6368; }
+.searchInput { width:100%; padding:6px 8px 6px 30px; font-size:13px; border:1px solid var(--border-color); border-radius:4px; background: var(--panel-section-bg, #fff); color: var(--text-primary); }
+.searchInput:focus { outline:none; border-color:#4285f4; box-shadow:0 0 0 1px #4285f4; }
+.searchHelp { font-size:11px; color: var(--text-secondary); }
+.tree, .tree ul { list-style:none; padding-left:14px; margin:4px 0; }
+.folder { font-weight:500; cursor:default; }
+.placemark { cursor:default; }
+.layers { list-style:none; margin:4px 0; padding-left:4px; font-size:12.5px; }
+.layers li { margin:2px 0; }
+.layers input { margin-right:6px; }
+@media (max-width:900px){ .sidePanel { display:none; } }

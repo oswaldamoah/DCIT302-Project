@@ -6,6 +6,10 @@
   --text-secondary: #5f6368;
   --hover-bg: #e8e8e8;
   --border-color: #dadce0;
+  --titlebar-bg: linear-gradient(#f2f3f4,#e5e7e9);
+  --menubar-bg: #ffffff;
+  --panel-section-bg: #ffffff;
+  --panel-header-bg: linear-gradient(#f8f9fa,#eceff3);
 }
 [data-theme='dark'] {
   --bg-primary: #242424;
@@ -14,6 +18,10 @@
   --text-secondary: #9aa0a6;
   --hover-bg: #3c4043;
   --border-color: #5f6368;
+  --titlebar-bg-dark: linear-gradient(#303134,#202124);
+  --menubar-bg-dark: #2d2f31;
+  --panel-section-bg: #2f3032;
+  --panel-header-bg: linear-gradient(#3a3b3d,#2a2b2d);
 }
 body {
   margin: 0;

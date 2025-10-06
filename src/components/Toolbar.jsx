@@ -57,7 +57,7 @@ const shareItems = [
   { label: 'View in Google Earth Online', icon: <PublicIcon fontSize="large" /> },
 ];
 
-function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
+function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme, sideWidth = 0 }) {
   const {
     isAddMenuOpen,
     setIsAddMenuOpen,
@@ -79,7 +79,7 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
   // Close dropdowns when clicking outside
   React.useEffect(() => {
     function handleClick(e) {
-      if (!toolbarRef.current.contains(e.target)) {
+      if (toolbarRef.current && !toolbarRef.current.contains(e.target)) {
         closeAllMenus();
       }
     }
@@ -87,15 +87,38 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [closeAllMenus]);
 
+  // Determine available width (viewport width minus side panel width)
+  const [autoFormat, setAutoFormat] = React.useState(displayFormat);
+  React.useEffect(() => {
+    function handleResize() {
+      const vw = window.innerWidth;
+      const available = vw - sideWidth - 260; // rough space for right controls
+      if (available < 520) {
+        setAutoFormat('iconsOnly');
+      } else if (available < 660 && autoFormat === 'iconsAndText') {
+        setAutoFormat('iconsOnly');
+      } else if (displayFormat !== 'iconsOnly') {
+        setAutoFormat(displayFormat);
+      } else {
+        setAutoFormat(displayFormat);
+      }
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sideWidth, displayFormat, autoFormat]);
+
+  const effFormat = autoFormat;
+
   return (
-    <div className={styles.toolbar} ref={toolbarRef}>
+    <div className={styles.toolbar} ref={toolbarRef} style={{ left: sideWidth, width: `calc(100% - ${sideWidth}px)` }}>
       {/* Button Groups */}
       <div className={styles.leftGroups}>
   <div className={styles.group} ref={addRef}>
           <ToolbarButton
-            icon={<>{<AddIcon fontSize="large" />} {displayFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
-            text={displayFormat === 'iconsOnly' ? '' : <>Add <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
-            displayFormat={displayFormat}
+            icon={<>{<AddIcon fontSize="large" />} {effFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
+            text={effFormat === 'iconsOnly' ? '' : <>Add <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
+            displayFormat={effFormat}
             onClick={() => openMenu('add')}
             isActive={isAddMenuOpen}
             ariaExpanded={isAddMenuOpen}
@@ -114,9 +137,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
         </div>
   <div className={styles.group} ref={showRef}>
           <ToolbarButton
-            icon={<>{<VisibilityIcon fontSize="large" />} {displayFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
-            text={displayFormat === 'iconsOnly' ? '' : <>Show <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
-            displayFormat={displayFormat}
+            icon={<>{<VisibilityIcon fontSize="large" />} {effFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
+            text={effFormat === 'iconsOnly' ? '' : <>Show <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
+            displayFormat={effFormat}
             onClick={() => openMenu('show')}
             isActive={isShowMenuOpen}
             ariaExpanded={isShowMenuOpen}
@@ -136,9 +159,9 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
   <div className={styles.group} ref={planetRef}>
           {/* Planet button with dropdown */}
           <ToolbarButton
-            icon={<><PublicIcon fontSize="large" />{displayFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{marginLeft: '2px'}} />}</>}
-            text={displayFormat === 'iconsOnly' ? '' : <>Planet <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
-            displayFormat={displayFormat}
+            icon={<><PublicIcon fontSize="large" />{effFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{marginLeft: '2px'}} />}</>}
+            text={effFormat === 'iconsOnly' ? '' : <>Planet <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
+            displayFormat={effFormat}
             onClick={() => openMenu('planet')}
             isActive={isPlanetMenuOpen}
             ariaExpanded={isPlanetMenuOpen}
@@ -158,20 +181,20 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
           <ToolbarButton
             icon={<StraightenIcon fontSize="large" />}
             text="Ruler"
-            displayFormat={displayFormat}
+            displayFormat={effFormat}
             onClick={() => console.log('Action: Ruler')}
           />
           <ToolbarButton
             icon={<PhotoCameraIcon fontSize="large" />}
             text="Camera"
-            displayFormat={displayFormat}
+            displayFormat={effFormat}
             onClick={() => console.log('Action: Camera')}
           />
           <div style={{ position: 'relative' }} ref={shareRef}>
             <ToolbarButton
-              icon={<>{<OpenInNewIcon fontSize="large" />} {displayFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
-              text={displayFormat === 'iconsOnly' ? '' : <>Share <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
-              displayFormat={displayFormat}
+              icon={<>{<OpenInNewIcon fontSize="large" />} {effFormat === 'iconsOnly' && <ArrowDropDownIcon fontSize="small" style={{ marginLeft: '2px' }} />}</>}
+              text={effFormat === 'iconsOnly' ? '' : <>Share <ArrowDropDownIcon fontSize="small" style={{verticalAlign:'middle'}} /></>}
+              displayFormat={effFormat}
               onClick={() => openMenu('share')}
               isActive={isShareMenuOpen}
               ariaExpanded={isShareMenuOpen}
@@ -198,6 +221,7 @@ function Toolbar({ displayFormat, setDisplayFormat, theme, toggleTheme }) {
             className={styles.displaySelect}
             value={displayFormat}
             onChange={e => setDisplayFormat(e.target.value)}
+            title={effFormat !== displayFormat ? `Auto-compacted to ${effFormat}` : 'Display mode'}
           >
             <option value="iconsOnly">Icons Only</option>
             <option value="textOnly">Text Only</option>
