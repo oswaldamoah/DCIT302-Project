@@ -1,6 +1,6 @@
 {
   "name": "Google Earth Pro (Prototype)",
-  "short_name": "Earth Pro",
+  "short_name": "Earth Pro (Prototype)",
   "description": "High-fidelity Google Earth Pro (Prototype) UI built in React.",
   "start_url": "/index.html?v=2",
   "scope": "/",
