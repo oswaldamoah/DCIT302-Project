@@ -1,6 +1,6 @@
 .menuBar {
   position: fixed;
-  top: 24px; /* below title bar */
+  top: 0;
   left: 0;
   right: 0;
   width: 100%;

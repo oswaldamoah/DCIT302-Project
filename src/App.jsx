@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 import Toolbar from './components/Toolbar';
 import MenuBar from './components/MenuBar';
-import TitleBar from './components/TitleBar';
 import SidePanel from './components/SidePanel';
 import SettingsPanel from './components/SettingsPanel';
 import styles from './App.module.css';
@@ -19,7 +18,6 @@ function AppContent() {
 
   return (
     <div className={styles.app}>
-  <TitleBar />
   <MenuBar />
       <Toolbar
         displayFormat={displayFormat}

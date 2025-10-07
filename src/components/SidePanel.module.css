@@ -1,10 +1,10 @@
 .sidePanel {
   position: fixed;
-  top: 56px; /* below title + menu + aligned with toolbar */
+  top: 32px; /* below menu + aligned with toolbar */
   left: 0;
   bottom: 0;
   background: var(--bg-secondary, #f8f9fa);
-  border-right: 1px solid #e0e3e7;
+  border-right: 1px solid var(--panel-divider);
   display: flex;
   flex-direction: column;
   z-index: 1100;
@@ -38,28 +38,29 @@
   align-items:center;
   gap:4px;
   padding:4px 8px;
-  background: var(--panel-header-bg, linear-gradient(#f8f9fa,#eceff3));
+  background: var(--panel-header-bg);
   border:none;
   cursor:pointer;
   font-size:13px;
   font-weight:500;
   text-align:left;
   font-family:'Google Sans', Roboto, Arial, sans-serif;
+  color: var(--text-primary);
 }
 .sectionHeader:hover { background: var(--hover-bg); }
-.sectionChevron { display:flex; align-items:center; }
+.sectionChevron { display:flex; align-items:center; color: var(--text-secondary); }
 .sectionTitle { flex:1; }
-.sectionBody { padding:8px 10px 10px 10px; font-size:12.5px; line-height:1.4; background: var(--panel-section-bg, #fff); }
+.sectionBody { padding:8px 10px 10px 10px; font-size:12.5px; line-height:1.4; background: var(--panel-section-bg, #fff); color: var(--text-primary); }
 .searchBoxWrapper { display:flex; flex-direction:column; gap:6px; }
 .searchInputWrapper { position:relative; display:flex; align-items:center; }
-.searchIcon { position:absolute; left:8px; color:#5f6368; }
-.searchInput { width:100%; padding:6px 8px 6px 30px; font-size:13px; border:1px solid var(--border-color); border-radius:4px; background: var(--panel-section-bg, #fff); color: var(--text-primary); }
+.searchIcon { position:absolute; left:8px; color: var(--text-secondary); }
+.searchInput { width:100%; padding:6px 8px 6px 30px; font-size:13px; border:1px solid var(--border-color); border-radius:4px; background: var(--panel-section-bg); color: var(--text-primary); }
 .searchInput:focus { outline:none; border-color:#4285f4; box-shadow:0 0 0 1px #4285f4; }
 .searchHelp { font-size:11px; color: var(--text-secondary); }
 .tree, .tree ul { list-style:none; padding-left:14px; margin:4px 0; }
-.folder { font-weight:500; cursor:default; }
-.placemark { cursor:default; }
-.layers { list-style:none; margin:4px 0; padding-left:4px; font-size:12.5px; }
+.folder { font-weight:500; cursor:default; color: var(--text-primary); }
+.placemark { cursor:default; color: var(--text-primary); }
+.layers { list-style:none; margin:4px 0; padding-left:4px; font-size:12.5px; color: var(--text-primary); }
 .layers li { margin:2px 0; }
 .layers input { margin-right:6px; }
 @media (max-width:900px){ .sidePanel { display:none; } }
