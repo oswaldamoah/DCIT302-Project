@@ -35,8 +35,8 @@ function AppContent() {
           title="Dummy Google Earth"
           scrolling="no"
           style={{
-            width: '100%',
-            height: '100%',
+            width: '85%',
+            height: '105%',
             border: 'none',
             borderRadius: '0',
             background: '#000',
