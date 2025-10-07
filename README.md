@@ -9,8 +9,9 @@
 ## 1. Overview
 A streamlined UI experiment to organize Google Earth Pro's UI: 
 
-Demo Video:
-<video src="./public/media/11046928_OswaldAmoah_GoogleEarthPro.mp4" controls width="640"></video>
+**Demo Video:**
+
+[![Demo Video](https://img.youtube.com/vi/rWtKF6M66ic/0.jpg)](https://youtu.be/rWtKF6M66ic)
 ---
 ## 2. Tech Stack
 - React · Vite · CSS Modules + CSS Variables 
