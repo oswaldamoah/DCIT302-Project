@@ -9,15 +9,19 @@
 ## 1. Overview
 A streamlined UI experiment to organize Google Earth Pro's UI: 
 
-**Demo Video:**
+**Demo Video (click to watch on YouTube):**
 
-[![Demo Video](https://img.youtube.com/vi/rWtKF6M66ic/0.jpg)](https://youtu.be/rWtKF6M66ic)
+<a href="https://youtu.be/rWtKF6M66ic">
+  <img src="https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2017%2F07%2Fgoogle_earth_banner.jpg&signature=a277ba48ed4ade5385ff8ecaa041bf2b" alt="Demo Video (Click to watch on YouTube)" width="680">
+</a>
 ---
 ## 2. Tech Stack
-- React · Vite · CSS Modules + CSS Variables 
+- React · Vite · CSS
 - Material UI Icons 
 - Three.js 
-- Service Worker (PWA)---
+- Service Worker (PWA)
+
+---
 
 ## 3. Core Features
 - **Larger, Grouped Toolbar**: Better button sizing and logical clustering for improved usability
