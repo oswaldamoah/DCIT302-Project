@@ -9,8 +9,6 @@
 ## 1. Overview
 A streamlined UI experiment to organize Google Earth Pro's UI: 
 
-**https://302-project.vercel.app/**
-
 Demo Video:
 <video src="./public/media/11046928_OswaldAmoah_GoogleEarthPro.mp4" controls width="640"></video>
 ---
