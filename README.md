@@ -14,6 +14,7 @@ A streamlined UI experiment to organize Google Earth Pro's UI:
 <a href="https://youtu.be/rWtKF6M66ic">
   <img src="https://img-cdn.tnwcdn.com/image?fit=1280%2C720&url=https%3A%2F%2Fcdn0.tnwcdn.com%2Fwp-content%2Fblogs.dir%2F1%2Ffiles%2F2017%2F07%2Fgoogle_earth_banner.jpg&signature=a277ba48ed4ade5385ff8ecaa041bf2b" alt="Demo Video (Click to watch on YouTube)" width="680">
 </a>
+
 ---
 ## 2. Tech Stack
 - React · Vite · CSS
