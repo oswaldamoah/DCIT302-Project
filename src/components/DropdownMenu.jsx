@@ -35,6 +35,7 @@ function DropdownMenu({ items, onItemClick, displayFormat, forceShowText, anchor
       {items.map((item) => (
         <ToolbarButton
           key={item.label}
+            variant="dropdown"
           icon={item.icon}
           text={displayFormat === 'iconsOnly' && !forceShowText ? '' : item.label}
           displayFormat={displayFormat}

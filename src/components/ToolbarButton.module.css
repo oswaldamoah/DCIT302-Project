@@ -42,3 +42,21 @@
   letter-spacing: 0;
   color: var(--text-primary);
 }
+
+/* Dropdown layout: icon locked left, text centered across remaining width */
+.dropdownVariant {
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 180px;
+  position: relative;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.dropdownVariant .icon { margin-right: 8px; }
+.dropdownVariant .text {
+  flex: 1;
+  text-align: center;
+  display: inline-block;
+  /* Optical centering: shift text slightly left to compensate for icon weight */
+  transform: translateX(-10px);
+}
